@@ -1,0 +1,36 @@
+@using NavMvc
+@using NavMvc.NavItems
+@model string
+
+@RenderNavigation(Model)
+
+@helper RenderNavigation(string context, List<string> parentnavs = null)
+{
+    if (string.IsNullOrWhiteSpace(context)) { return; }
+    
+    parentnavs = parentnavs ?? new List<string>();
+    if (parentnavs.Contains(context)) {return;}
+    parentnavs.Add(context);
+
+    var navs = @Html.GetNavigationFor(context);
+    if (navs == null || !navs.Any()) { return; }
+    
+    <ul class="navigation">
+        @foreach (var nav in navs) {
+            var actionNav = nav as ActionNavItem;
+            <li class="@(nav.IsActive ? "active" : "not-active")">
+                @if (actionNav != null) {
+                    <a href="@Url.Action(actionNav.Action, actionNav.Controller, actionNav.RouteValues)"
+                        title="@actionNav.Description">
+                        @actionNav.Title
+                    </a>
+                } else {
+                    <span>
+                        @nav.Title
+                    </span>
+                }
+                @RenderNavigation(nav.SubNavContext, parentnavs.ToList())
+            </li>
+        }
+    </ul>
+}

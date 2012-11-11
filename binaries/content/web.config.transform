@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="navProviders" type="NavMvc.Configuration.NavMvcConfigurationSection, NavMvc"/>
+  </configSections>
+  <navProviders inactiveNavBehavior="RedirectToFirstActive">
+    <add name="reflection" type="NavMvc.Providers.ReflectionNavProvider, NavMvc" />
+  </navProviders>
+</configuration>
