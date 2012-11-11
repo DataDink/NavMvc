@@ -15,6 +15,7 @@ namespace NavTests.Controllers
         [Authorize(Roles = "Administrators")]
         public ActionResult Index()
         {
+            this.SetNavValue("AdminSubNav", "AdminValue", 10);
             ViewBag.Message = "Admin page index";
             return View("CommonPage");
         }
@@ -22,6 +23,7 @@ namespace NavTests.Controllers
         [NavItem("AdminSubNav", Title = "Admin Page 1", Description = "This is the second page", OrderingHint = 1)]
         public ActionResult Page1()
         {
+            this.SetNavValue("AdminSubNav", "AdminValue", 10);
             ViewBag.Message = "Admin page 1";
             return View("CommonPage");
         }
@@ -29,6 +31,7 @@ namespace NavTests.Controllers
         [NavItem("AdminSubNav", Title = "Admin Page 2", Description = "This is the third page", OrderingHint = 2)]
         public ActionResult Page2()
         {
+            this.SetNavValue("AdminSubNav", "AdminValue", 10);
             ViewBag.Message = "Admin page 2";
             return View("CommonPage");
         }

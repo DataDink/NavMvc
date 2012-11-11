@@ -107,7 +107,7 @@ namespace NavMvc
         /// <param name="value">The value</param>
         public static void SetNavValue(this HtmlHelper webContext, string navContext, string name, object value)
         {
-            NavMvcFactory.Current.AddContextValue(navContext, name, value);
+            NavMvcFactory.Current.AddContextValue(webContext.ViewContext.Controller.ControllerContext, navContext, name, value);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace NavMvc
         /// <param name="value">The value</param>
         public static void SetNavValue(this ViewContext webContext, string navContext, string name, object value)
         {
-            NavMvcFactory.Current.AddContextValue(navContext, name, value);
+            NavMvcFactory.Current.AddContextValue(webContext.Controller.ControllerContext, navContext, name, value);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace NavMvc
         /// <param name="value">The value</param>
         public static void SetNavValue(this ControllerBase webContext, string navContext, string name, object value)
         {
-            NavMvcFactory.Current.AddContextValue(navContext, name, value);
+            NavMvcFactory.Current.AddContextValue(webContext.ControllerContext, navContext, name, value);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace NavMvc
         /// <param name="value">The value</param>
         public static void SetNavValue(this ControllerContext webContext, string navContext, string name, object value)
         {
-            NavMvcFactory.Current.AddContextValue(navContext, name, value);
+            NavMvcFactory.Current.AddContextValue(webContext, navContext, name, value);
         }
         #endregion
 

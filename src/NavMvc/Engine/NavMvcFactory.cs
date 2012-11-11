@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
@@ -78,18 +79,28 @@ namespace NavMvc.Engine
         #endregion
 
         #region Factory Values
-        private readonly Dictionary<string, Dictionary<string, object>> _routeValues = new Dictionary<string, Dictionary<string, object>>(); 
+        private Dictionary<string, Dictionary<string, object>> GetRouteValues(ControllerContext webContext)
+        {
+            if (webContext == null || webContext.HttpContext == null || webContext.HttpContext.Items == null) return null;
+            var values = webContext.HttpContext.Items["NavMvcContextValues"] 
+                as Dictionary<string, Dictionary<string, object>>
+                ?? new Dictionary<string, Dictionary<string, object>>();
+            webContext.HttpContext.Items["NavMvcContextValues"] = values;
+            return values;
+        }
 
         /// <summary>
         /// Adds a route value to be persisted for the specified context
         /// </summary>
+        /// <param name="webContext">The current web context</param>
         /// <param name="context">The navigation context this value belongs to</param>
         /// <param name="name">The name of this value (e.g. currentEntityId)</param>
         /// <param name="value">The value</param>
-        public void AddContextValue(string context, string name, object value)
+        public void AddContextValue(ControllerContext webContext, string context, string name, object value)
         {
-            if (!_routeValues.ContainsKey(context)) _routeValues.Add(context, new Dictionary<string, object>());
-            var ctx = _routeValues[context];
+            var routeValues = GetRouteValues(webContext);
+            if (!routeValues.ContainsKey(context)) routeValues.Add(context, new Dictionary<string, object>());
+            var ctx = routeValues[context];
             if (!ctx.ContainsKey(name)) ctx.Add(name, value);
             else ctx[name] = value;
         }
@@ -97,32 +108,40 @@ namespace NavMvc.Engine
         /// <summary>
         /// Removes a route value from the specified context
         /// </summary>
+        /// <param name="webContext">The current web context</param>
         /// <param name="context">The navigation context the value belongs to</param>
         /// <param name="name">The name of the value to be removed</param>
-        public void RemoveContextValue(string context, string name)
+        public void RemoveContextValue(ControllerContext webContext, string context, string name)
         {
-            if (_routeValues.ContainsKey(context) && _routeValues[context].ContainsKey(name)) {
-                _routeValues[context].Remove(name);
+            var routeValues = GetRouteValues(webContext);
+            if (routeValues.ContainsKey(context) && routeValues[context].ContainsKey(name))
+            {
+                routeValues[context].Remove(name);
             }
         }
 
         /// <summary>
         /// Clears all navigation route values for the specified context
         /// </summary>
+        /// <param name="webContext">The current web context</param>
         /// <param name="context">The context to be purged</param>
-        public void ClearContextValues(string context)
+        public void ClearContextValues(ControllerContext webContext, string context)
         {
-            if (_routeValues.ContainsKey(context)) {
-                _routeValues.Remove(context);
+            var routeValues = GetRouteValues(webContext);
+            if (routeValues.ContainsKey(context))
+            {
+                routeValues.Remove(context);
             }
         }
 
         /// <summary>
         /// Clears all navigation route values
         /// </summary>
-        public void ClearAllContextValues()
+        /// <param name="webContext">The current web context</param>
+        public void ClearAllContextValues(ControllerContext webContext)
         {
-            _routeValues.Clear();
+            var routeValues = GetRouteValues(webContext);
+            routeValues.Clear();
         }
         #endregion
 
@@ -142,7 +161,7 @@ namespace NavMvc.Engine
 
             itemsWithChildren = FilterByRoles(itemsWithChildren);
             DetectActiveNavigations(webContext, itemsWithChildren);
-            PopulateRouteValues(itemsWithChildren);
+            PopulateRouteValues(webContext, itemsWithChildren);
             return itemsWithChildren.Keys.OrderBy(i => i.OrderingHint).ToArray();
         }
 
@@ -250,15 +269,16 @@ namespace NavMvc.Engine
         }
 
         // Clones and populates route values into each NavItem
-        private void PopulateRouteValues(Dictionary<NavItem, NavItem[]> items)
+        private void PopulateRouteValues(ControllerContext webContext, Dictionary<NavItem, NavItem[]> items)
         {
             foreach (var item in items) {
                 var newRoutes = item.Key.RouteValues != null
                     ? new RouteValueDictionary(item.Key.RouteValues)
                     : new RouteValueDictionary();
-                if (_routeValues.ContainsKey(item.Key.Context) && _routeValues[item.Key.Context] != null)
+                var routeValues = GetRouteValues(webContext);
+                if (routeValues.ContainsKey(item.Key.Context) && routeValues[item.Key.Context] != null)
                 {
-                    foreach (var value in _routeValues[item.Key.Context])
+                    foreach (var value in routeValues[item.Key.Context])
                     {
                         newRoutes[value.Key] = value.Value;
                     }
