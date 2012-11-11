@@ -6,20 +6,16 @@
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div class="page">
-        <header>
-            <div id="title">
-                <h1>Mvc Navigation Tests</h1>
-            </div>
-            <div id="main-nav">
-                @Html.Partial("_MvcNavigation", "MainNav")
-            </div>
-        </header>
-        <section id="main">
-            @RenderBody()
-        </section>
-        <footer>
-        </footer>
-    </div>
+    <header>
+        <div id="title">
+            <h1>Mvc Navigation Tests</h1>
+        </div>
+        @Html.Partial("_MvcNavigation", "MainNav")
+    </header>
+    <section id="main">
+        @RenderBody()
+    </section>
+    <footer>
+    </footer>
 </body>
 </html>

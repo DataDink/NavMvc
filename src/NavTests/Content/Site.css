@@ -12,10 +12,12 @@ body {
     color: white;
 }
 
-body > .page {
+body > header,
+body > div,
+body > section,
+body > footer {
     width: 800px;
     margin: auto;
-    padding-top: 100px;
 }
 
 body > .page > header {
@@ -38,90 +40,62 @@ body > .page > header {
     margin: 15px 50px 0px;
 }
 
-#main-nav {
-    width: 600px;
-    height: 30px;
-    margin: auto;
-}
-
-#main-nav > ul {
-    width: 100%;
-    height: 100%;
-}
-
-#main-nav > .navigation > li {
-    background-color: #808080;
-    border: 1px solid white;
-}
-
 .navigation {
-    display: block;
-    margin: 0px;
-    padding: 0px;
-    list-style: none;
+   display: block;
+   margin: 5 auto;
+   padding: 0px;
+   width: 900px;
 }
 
 .navigation > li {
-    display: inline-block;
-    margin: 0px 3px;
-    height: 100%;
-    padding: 0px;
-}
-
-.navigation > li:hover {
-    background-color: #404040;
+   display: inline-block;
+   margin: 0px;
+   padding: 0px;
+   border: 1px solid white;
+    background-color: black;
 }
 
 .navigation > li > a,
 .navigation > li > span {
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 5px 15px 5px;
-    color: white;
-    text-decoration: none;
+   display: block;
+   padding: 5px 5px;
+   margin: 0px;
+   text-align: center;
+   color: #D0D0D0;
+   text-decoration: none;
 }
 
 .navigation > li.active > a,
 .navigation > li.active > span {
-    color: yellow;
+    color: #EFEF00
 }
 
-.navigation > li > a:hover,
-.navigation > li > span:hover {
-    color: #D0D0D0;
+.navigation > li > a:hover {
+   color: #FFFFFF;
 }
 
 .navigation > li > .navigation {
-    display: none;
-    position: absolute;
-    background-color: #808080;
-    border: 1px solid black;
-    margin-top: -10px;
-    margin-left: 5px;
+   display: none;
+   position: absolute;
 }
 
 .navigation > li:hover > .navigation,
-.navigation > li:hover > .navigation:hover,
-.navigation > li:hover > .navigation > li:hover {
-    display: block;
-}
-
-.navigation > li:hover > .navigation > li {
-    display: block;
-    width: 100%;
-    height: 30px;
-}
-
-#left-nav 
-{
+.navigation > li > .navigation:hover {
+   display: block;
     width: 200px;
-    float: left;
-    margin: 0px 50px 10px -250px;
-    background-color: darkred;
-    border: 1px solid white;
 }
 
-#left-nav > .navigation > li {
+.navigation > li > .navigation > li {
+   display: block;
+   margin: 0px;
+}
+
+section > .navigation {
+    float: left;
+    width: 200px;
+    margin-left: -225px;
+}
+
+section > .navigation > li {
     display: block;
 }

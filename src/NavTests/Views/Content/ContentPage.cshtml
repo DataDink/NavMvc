@@ -2,8 +2,6 @@
     ViewBag.Title = "CommonPage";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="left-nav">
-    @Html.Partial("_MvcNavigation", "LeftNav")
-</div>
+@Html.Partial("_MvcNavigation", "LeftNav")
 
 <h2>@ViewBag.Message</h2>
