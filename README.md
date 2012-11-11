@@ -39,4 +39,4 @@ public class SomeController : Controller
 </div>
 ```
 
-###See the wiki for more info
+###See the [wiki](https://github.com/DataDink/NavMvc/wiki) for more info
