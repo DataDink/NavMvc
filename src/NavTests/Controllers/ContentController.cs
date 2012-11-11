@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using NavMvc;
+using NavMvc.NavItems;
 
 namespace NavTests.Controllers
 {
@@ -20,6 +21,11 @@ namespace NavTests.Controllers
         [NavItem("ContentSubNav", Title = "Content Second Page", Description = "Another content page", OrderingHint = 1)]
         public ActionResult Content2()
         {
+            this.AddNavItem("MainNav", new UrlNavItem {
+                Title = "Poof!",
+                Url = "http://www.markonthenet.com",
+                OrderingHint = 9999
+            });
             ViewBag.Message = "Content Page 2";
             return View("ContentPage");
         }

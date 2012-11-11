@@ -18,11 +18,16 @@
     <ul class="navigation">
         @foreach (var nav in navs) {
             var actionNav = nav as ActionNavItem;
+            var urlNav = nav as UrlNavItem;
             <li class="@(nav.IsActive ? "active" : "not-active")">
                 @if (actionNav != null) {
                     <a href="@Url.Action(actionNav.Action, actionNav.Controller, actionNav.RouteValues)"
                         title="@actionNav.Description">
                         @actionNav.Title
+                    </a>
+                } else if (urlNav != null) {
+                    <a href="@urlNav.Url" title="@urlNav.Description">
+                        @urlNav.Title
                     </a>
                 } else {
                     <span>

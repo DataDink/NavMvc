@@ -159,6 +159,9 @@ namespace NavMvc.Engine
                 .Where(i => i != null)
                 .Select(i => (NavItem)i.Clone())
                 .ToArray();
+            foreach (var item in items) {
+                item.Context = navContext;
+            }
             return items;
         }
 
@@ -229,7 +232,7 @@ namespace NavMvc.Engine
         // Splits and matches the requiredRoles string to the available userRoles
         private bool MatchRolesCriteria(IEnumerable<string> userRoles, string requiredRoles)
         {
-            return requiredRoles.Split(";, ".ToArray(), StringSplitOptions.RemoveEmptyEntries)
+            return (requiredRoles ?? "").Split(";, ".ToArray(), StringSplitOptions.RemoveEmptyEntries)
                 .All(r => userRoles.Contains(r, StringComparer.InvariantCultureIgnoreCase));
         }
 
