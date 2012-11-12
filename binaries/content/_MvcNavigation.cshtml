@@ -12,7 +12,7 @@
     if (parentnavs.Contains(context)) {return;}
     parentnavs.Add(context);
 
-    var navs = @Html.GetNavigationFor(context);
+    var navs = Html.GetNavigationFor(context);
     if (navs == null || !navs.Any()) { return; }
     
     <ul class="navigation">
