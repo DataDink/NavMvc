@@ -5,12 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using NavMvc;
 using NavMvc.NavItems;
+using NavMvc.Service;
 
 namespace NavTests.Controllers
 {
     public class ContentController : Controller
     {
-        [NavItem("MainNav", SubNavContext = "ContentSubNav", Title="Site Content", Description = "Enter here for something interesting!")]
+        public INavigationService Navigation = NavigationService.Configured;
+        [NavItem("MainNav", SubNavContext = "ContentSubNav", Title = "Site Content", Description = "Enter here for something interesting!")]
         [NavItem("ContentSubNav", Title = "Content First Page", Description = "This is the same link as the parent menu", OrderingHint = 0)]
         public ActionResult Content1()
         {
@@ -21,7 +23,8 @@ namespace NavTests.Controllers
         [NavItem("ContentSubNav", Title = "Content Second Page", Description = "Another content page", OrderingHint = 1)]
         public ActionResult Content2()
         {
-            this.AddNavItem("MainNav", new UrlNavItem {
+            Navigation.AddNavItem("MainNav", new UrlNavItem
+            {
                 Title = "Poof!",
                 Url = "http://www.markonthenet.com",
                 OrderingHint = 9999

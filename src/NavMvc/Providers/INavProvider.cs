@@ -5,6 +5,6 @@ namespace NavMvc.Providers
 {
     public interface INavProvider
     {
-        NavItem[] GetNavItems(ControllerContext webContext, string navContext);
+        NavItem[] GetNavItems(string navContext);
     }
 }

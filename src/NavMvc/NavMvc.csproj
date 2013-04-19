@@ -43,8 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\NavMvcConfigurationSection.cs" />
-    <Compile Include="Engine\NavMvcFactory.cs" />
+    <Compile Include="Configuration\NavMvcConfiguration.cs" />
     <Compile Include="NavMvcExtensions.cs" />
     <Compile Include="NavItems\ActionNavItem.cs" />
     <Compile Include="NavItems\NavItem.cs" />
@@ -54,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\INavProvider.cs" />
     <Compile Include="Providers\ReflectionNavProvider.cs" />
+    <Compile Include="Service\NavigationService.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

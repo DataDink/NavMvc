@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Compilation;
 using System.Web.Mvc;
 using NavMvc.NavItems;
 
@@ -12,16 +14,23 @@ namespace NavMvc.Providers
     {
         private Dictionary<string, List<NavItem>> _navItems;
  
-        public NavItem[] GetNavItems(ControllerContext webContext, string navContext)
+        public NavItem[] GetNavItems(string navContext) 
         {
-            if (_navItems == null) _navItems = ReflectNavItems(webContext);
+            if (_navItems == null) _navItems = ReflectNavItems();
             if (!_navItems.ContainsKey(navContext)) return new NavItem[0];
             return _navItems[navContext].ToArray();
         }
 
-        private Dictionary<string, List<NavItem>> ReflectNavItems(ControllerContext context)
+        private Dictionary<string, List<NavItem>> ReflectNavItems()
         {
-            var assembly = context.Controller.GetType().Assembly;
+            var context = HttpContext.Current;
+            if (context == null) return null;
+            var application = context.ApplicationInstance;
+            if (application == null) return null;
+            var appType = application.GetType().BaseType;
+            if (appType == null) return null;
+
+            var assembly = appType.Assembly;
             var controllers = assembly.GetTypes().Where(t => typeof (IController).IsAssignableFrom(t)).ToArray();
             var actions = controllers.SelectMany(c => c.GetMethods());
             var attributes = actions

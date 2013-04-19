@@ -1,5 +1,4 @@
-﻿@using NavMvc
-@using NavMvc.NavItems
+﻿@using NavMvc.NavItems
 @model string
 
 @RenderNavigation(Model)
@@ -19,7 +18,8 @@
         @foreach (var nav in navs) {
             var actionNav = nav as ActionNavItem;
             var urlNav = nav as UrlNavItem;
-            <li class="@(nav.IsActive ? "active" : "not-active")">
+            var isActive = actionNav != null && actionNav.IsActive == true;
+            <li class="@(isActive ? "active" : "not-active")">
                 @if (actionNav != null) {
                     <a href="@Url.Action(actionNav.Action, actionNav.Controller, actionNav.RouteValues)"
                         title="@actionNav.Description">

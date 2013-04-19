@@ -1,99 +1,54 @@
-﻿using System.Linq;
-using System.Web.Mvc;
-using NavMvc.Engine;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NavMvc.NavItems;
+using NavMvc.Service;
 
-namespace NavMvc
+namespace System.Web.Mvc
 {
     public static class NavMvcExtensions
     {
+        private static readonly INavigationService Service = NavigationService.Configured;
+
         #region GetNavigationFor
         /// <summary>
         /// Retrieves the navigation for the specified context
         /// </summary>
-        /// <param name="webContext"></param>
+        /// <param name="context"></param>
         /// <param name="navContext">The context</param>
         /// <returns>An array of NavItems</returns>
-        public static NavItem[] GetNavigationFor(this HtmlHelper webContext, string navContext)
+        public static NavItem[] GetNavigationFor(this HtmlHelper context, string navContext)
         {
-            return GetNavigationFor(webContext.ViewContext.Controller.ControllerContext, navContext);
+            var navigation = Service.GetNavItems(navContext);
+            MarkActive(context.ViewContext.Controller.ControllerContext, navigation);
+            return navigation;
         }
 
         /// <summary>
         /// Retrieves the navigation for the specified context
         /// </summary>
-        /// <param name="webContext"></param>
+        /// <param name="context"></param>
         /// <param name="navContext">The context</param>
         /// <returns>An array of NavItems</returns>
-        public static T[] GetNavigationFor<T>(this HtmlHelper webContext, string navContext) where T : NavItem
+        public static T[] GetNavigationFor<T>(this HtmlHelper context, string navContext) where T : NavItem
         {
-            return GetNavigationFor<T>(webContext.ViewContext.Controller.ControllerContext, navContext);
+            return GetNavigationFor(context, navContext).OfType<T>().ToArray();
         }
 
-        /// <summary>
-        /// Retrieves the navigation for the specified context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <returns>An array of NavItems</returns>
-        public static NavItem[] GetNavigationFor(this ViewContext webContext, string navContext)
+        private static bool MarkActive(ControllerContext context, IEnumerable<NavItem> items)
         {
-            return GetNavigationFor(webContext.Controller.ControllerContext, navContext);
-        }
-
-        /// <summary>
-        /// Retrieves the navigation for the specified context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <returns>An array of NavItems</returns>
-        public static T[] GetNavigationFor<T>(this ViewContext webContext, string navContext) where T : NavItem
-        {
-            return GetNavigationFor<T>(webContext.Controller.ControllerContext, navContext);
-        }
-
-        /// <summary>
-        /// Retrieves the navigation for the specified context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <returns>An array of NavItems</returns>
-        public static NavItem[] GetNavigationFor(this ControllerBase webContext, string navContext)
-        {
-            return GetNavigationFor(webContext.ControllerContext, navContext);
-        }
-
-        /// <summary>
-        /// Retrieves the navigation for the specified context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <returns>An array of NavItems</returns>
-        public static T[] GetNavigationFor<T>(this ControllerBase webContext, string navContext) where T : NavItem
-        {
-            return GetNavigationFor<T>(webContext.ControllerContext, navContext);
-        }
-
-        /// <summary>
-        /// Retrieves the navigation for the specified context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <returns>An array of NavItems</returns>
-        public static NavItem[] GetNavigationFor(this ControllerContext webContext, string navContext)
-        {
-            return GetNavigationFor<NavItem>(webContext, navContext);
-        }
-
-        /// <summary>
-        /// Retrieves the navigation for the specified context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <returns>An array of NavItems</returns>
-        public static T[] GetNavigationFor<T>(this ControllerContext webContext, string navContext) where T : NavItem
-        {
-            return NavMvcFactory.Current.GetNavItems(webContext, navContext).OfType<T>().ToArray();
+            if (items == null) return false;
+            var active = false;
+            var action = context.RouteData.Values["action"] as string;
+            var controller = context.RouteData.Values["controller"] as string;
+            foreach (var item in items) {
+                var actionItem = item as ActionNavItem;
+                if (actionItem == null) continue;
+                var isActive = actionItem.Action.Equals(action, StringComparison.InvariantCultureIgnoreCase)
+                    && actionItem.Controller.Equals(controller, StringComparison.InvariantCultureIgnoreCase);
+                actionItem.IsActive = isActive || MarkActive(context, Service.GetNavItems(item.SubNavContext));
+                active = active || actionItem.IsActive;
+            }
+            return active;
         }
         #endregion
 
@@ -107,43 +62,7 @@ namespace NavMvc
         /// <param name="value">The value</param>
         public static void SetNavValue(this HtmlHelper webContext, string navContext, string name, object value)
         {
-            NavMvcFactory.Current.AddContextValue(webContext.ViewContext.Controller.ControllerContext, navContext, name, value);
-        }
-
-        /// <summary>
-        /// Sets a value for the navigation context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <param name="name">The name of the value</param>
-        /// <param name="value">The value</param>
-        public static void SetNavValue(this ViewContext webContext, string navContext, string name, object value)
-        {
-            NavMvcFactory.Current.AddContextValue(webContext.Controller.ControllerContext, navContext, name, value);
-        }
-
-        /// <summary>
-        /// Sets a value for the navigation context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <param name="name">The name of the value</param>
-        /// <param name="value">The value</param>
-        public static void SetNavValue(this ControllerBase webContext, string navContext, string name, object value)
-        {
-            NavMvcFactory.Current.AddContextValue(webContext.ControllerContext, navContext, name, value);
-        }
-
-        /// <summary>
-        /// Sets a value for the navigation context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <param name="name">The name of the value</param>
-        /// <param name="value">The value</param>
-        public static void SetNavValue(this ControllerContext webContext, string navContext, string name, object value)
-        {
-            NavMvcFactory.Current.AddContextValue(webContext, navContext, name, value);
+            Service.AddContextValue(navContext, name, value);
         }
         #endregion
 
@@ -156,40 +75,7 @@ namespace NavMvc
         /// <param name="item">The navigation item to be added</param>
         public static void AddNavItem(this HtmlHelper webContext, string navContext, NavItem item)
         {
-            NavMvcFactory.Current.AddNavItem(navContext, item);
-        }
-
-        /// <summary>
-        /// Sets a value for the navigation context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <param name="item">The navigation item to be added</param>
-        public static void AddNavItem(this ViewContext webContext, string navContext, NavItem item)
-        {
-            NavMvcFactory.Current.AddNavItem(navContext, item);
-        }
-
-        /// <summary>
-        /// Sets a value for the navigation context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <param name="item">The navigation item to be added</param>
-        public static void AddNavItem(this ControllerBase webContext, string navContext, NavItem item)
-        {
-            NavMvcFactory.Current.AddNavItem(navContext, item);
-        }
-
-        /// <summary>
-        /// Sets a value for the navigation context
-        /// </summary>
-        /// <param name="webContext"></param>
-        /// <param name="navContext">The context</param>
-        /// <param name="item">The navigation item to be added</param>
-        public static void AddNavItem(this ControllerContext webContext, string navContext, NavItem item)
-        {
-            NavMvcFactory.Current.AddNavItem(navContext, item);
+            Service.AddNavItem(navContext, item);
         }
         #endregion
     }

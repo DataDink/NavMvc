@@ -39,13 +39,13 @@ namespace NavMvc.NavItems
         /// <summary>
         /// NavItems are cloned before delivery to help prevent member cross-talk
         /// </summary>
-        /// <summary>
-        /// True if this NavItem or one of its children's Action and Controller match the current routing information.
-        /// </summary>
-        public bool IsActive { get; set; }
         public object Clone()
         {
-            return MemberwiseClone();
+            var clone = (NavItem) MemberwiseClone();
+            if (clone.RouteValues != null) {
+                clone.RouteValues = new RouteValueDictionary(clone.RouteValues);
+            }
+            return clone;
         }
     }
 }
